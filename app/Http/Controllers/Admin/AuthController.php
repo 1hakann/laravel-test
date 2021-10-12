@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+    use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Session;
@@ -13,11 +13,6 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth.admin')->except(['getLogout', 'getLogin', 'postLogin']);
-    }
-
     public function index()
     {
         return view('admin.index');
@@ -84,9 +79,9 @@ class AuthController extends Controller
         Session::forget('signupInformations');
 
         if($newAdmin) {
-            return redirect()->route('admin.auth.index');
+            return redirect()->route('admin.auth.login')->with('messages','Siteye Giriş Yapabilirsiniz');
         } else {
-            return redirect()->route('admin.auth.register');
+            return redirect()->route('admin.auth.register')->with('messages','Bir hata meydana geldi.');
         }
     }
 
@@ -99,6 +94,11 @@ class AuthController extends Controller
     }
 
     public function postLogin(Request $request) {
+
+        if (Auth::guard('admin')->check()) {
+            return redirect(route('admin.auth.index'));
+        }
+
         $credentials = [
             'email' => $request->email,
             'password' => $request->password,
@@ -113,7 +113,7 @@ class AuthController extends Controller
             'password' => 'required'
         ];
         $messages = [];
-        $validator = Validator::make($request->all(), $rules, $messages, $attributes);
+        $validator = Validator::make($credentials, $rules, $messages, $attributes);
 
         if($validator->fails()) {
             return back()
@@ -121,16 +121,16 @@ class AuthController extends Controller
             ->withInput();
         }
 
-        // if(Auth::guard('admin')->attempt($credentials, $request->remember_token)) {
-        //     $auth = Auth::guard('admin')->user();
-        //     $admin = Admin::find($auth->id);
-        //     $admin -> last_login = Carbon::now();
-        //     $admin -> save();
+        if(Auth::attempt($credentials, $request->remember_token)) {
+             $auth = Auth::guard('admin')->user();
+             $admin = Admin::find($auth->id);
+             $admin -> last_login = Carbon::now();
+             $admin -> save();
 
-        //     return redirect()->route('dashboard');
-        // } else {
-        //     return redirect()->route('admin.auth.login')->withErrors([__('auth.failed')]);
-        // }
+             return redirect()->route('admin.auth.index');
+         } else {
+             return redirect()->route('admin.auth.login')->withErrors([__('auth.failed')]);
+         }
     }
 
 

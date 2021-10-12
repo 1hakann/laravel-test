@@ -31,11 +31,11 @@
               <div class="text-muted text-center mt-2 mb-4"><small>Sign up with</small></div>
               <div class="text-center">
                 <a href="#" class="btn btn-neutral btn-icon mr-4">
-                  <span class="btn-inner--icon"><img src="../assets/img/icons/common/github.svg"></span>
+                  <span class="btn-inner--icon"><img src="{{ asset('admin/img/icons/common/github.svg') }}"></span>
                   <span class="btn-inner--text">Github</span>
                 </a>
                 <a href="#" class="btn btn-neutral btn-icon">
-                  <span class="btn-inner--icon"><img src="../assets/img/icons/common/google.svg"></span>
+                  <span class="btn-inner--icon"><img src="{{ asset('admin/img/icons/common/google.svg') }}"></span>
                   <span class="btn-inner--text">Google</span>
                 </a>
               </div>
@@ -51,7 +51,13 @@
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                     </div>
-                    <input class="form-control" placeholder="User Name" type="text" name="username">
+                    <input class="form-control "@error('username') is-invalid @enderror placeholder="User Name" type="text" name="username">
+
+                    @error('username')
+                    <div>
+                        <strong><small style="color:#db4bff">{{ $message }}</small></strong>
+                    </div>
+                    @enderror
                   </div>
                 </div>
                 <div class="form-group">
@@ -60,6 +66,12 @@
                       <span class="input-group-text"><i class="ni ni-email-83"></i></span>
                     </div>
                     <input class="form-control" placeholder="Email" type="email" name="email">
+
+                    @error('email')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
                   </div>
                 </div>
                 <div class="form-group">
@@ -68,7 +80,13 @@
                       <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                     </div>
                     <input class="form-control" placeholder="Password" type="password" name="password">
-                  </div>
+
+                    @error('username')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
                 </div>
                 <div class="text-muted font-italic"><small>password strength: <span class="text-success font-weight-700">strong</span></small></div>
                 <div class="row my-4">
@@ -82,7 +100,7 @@
                   </div>
                 </div>
                 <div class="text-center">
-                  <button type="submit" class="btn btn-primary mt-4">Create account</button>
+                  <button type="submit" class="btn btn-primary mt-4" onclick="(e) => e.preventDefault()">Create account</button>
                 </div>
               </form>
             </div>
