@@ -3,17 +3,23 @@
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/admin', 'Admin/AuthController@index');
-
 Route::group(
-    ['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], function(Router $router) {
+    ['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.' ], function(Router $router) {
+
+        #Dashboard
+        $router -> get(
+            '/dashboard', [
+                'as' => 'auth.index',
+                'uses' => 'AuthController@index',
+                'middleware' => ['auth.admin'],
+            ]
+            );
 
         #Login
         $router -> get(
             '/login', [
                 'as' => 'auth.login',
                 'uses' => 'AuthController@getLogin',
-                'middleware' => ['auth.admin'],
             ]
         );
 
@@ -21,7 +27,6 @@ Route::group(
             '/login', [
                 'as' => 'auth.login.post',
                 'uses' => 'AuthController@postLogin',
-                'middleware' => ['auth.admin'],
             ]
         );
 
