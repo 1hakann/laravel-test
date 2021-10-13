@@ -5,14 +5,19 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Admin;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
+    protected $guard = 'admin';
+    protected $redirectTo = '/admin/register';
+    protected $loginPath = '/admin/login';
+
     public function index()
     {
         return view('admin.index');
@@ -46,7 +51,8 @@ class AuthController extends Controller
         $attributes = [
             'username' => 'Bir kullanıcın olmalı.',
             'email'=> 'Geçerli bir email girin',
-            'password' => 'Parola geçerli değil.'
+            'password' => 'Parola geçerli değil.',
+            'remember_token' => 'Kabul Etmelisiniz',
         ];
 
         $messages = [];
@@ -54,7 +60,8 @@ class AuthController extends Controller
         $rules = [
             'username' => 'required|max:40',
             'email' => 'required|email|unique:admins|max:191',
-            'password' => 'required|min:6'
+            'password' => 'required|min:6',
+            'remember_token' => 'accepted',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages, $attributes);
@@ -79,7 +86,7 @@ class AuthController extends Controller
         Session::forget('signupInformations');
 
         if($newAdmin) {
-            return redirect()->route('admin.auth.login')->with('messages','Siteye Giriş Yapabilirsiniz');
+            return redirect()->route('admin.auth.login')->with('messages','Üye olduğunuz için teşekkürler '. $request->username );
         } else {
             return redirect()->route('admin.auth.register')->with('messages','Bir hata meydana geldi.');
         }
@@ -93,45 +100,27 @@ class AuthController extends Controller
         }
     }
 
-    public function postLogin(Request $request) {
+    public function postLogin(Request $request)
+    {
 
-        if (Auth::guard('admin')->check()) {
-            return redirect(route('admin.auth.index'));
+        $this->validate($request, [
+            'email' => 'required',
+            'password' => 'required',
+        ]);
+
+        $admin = Admin::where('email', $request->email)->first();
+
+        if (!$admin) {
+            return redirect($this->loginPath)->with('error', 'Admin can not found!');
         }
 
-        $credentials = [
-            'email' => $request->email,
-            'password' => $request->password,
-            'enabled' => 1,
-        ];
-        $attributes = [
-            'email' => 'Email alanı zorunludur!',
-            'password' => 'Şifrenizi girin',
-        ];
-        $rules = [
-            'email' => 'required|email',
-            'password' => 'required'
-        ];
-        $messages = [];
-        $validator = Validator::make($credentials, $rules, $messages, $attributes);
-
-        if($validator->fails()) {
-            return back()
-            ->withErrors($validator)
-            ->withInput();
+        if (Hash::check($request->password, $admin->password)) {
+            Auth::guard('admin')->login($admin);
+            return redirect('admin/dashboard');
         }
 
-        if(Auth::attempt($credentials, $request->remember_token)) {
-             $auth = Auth::guard('admin')->user();
-             $admin = Admin::find($auth->id);
-             $admin -> last_login = Carbon::now();
-             $admin -> save();
-
-             return redirect()->route('admin.auth.index');
-         } else {
-             return redirect()->route('admin.auth.login')->withErrors([__('auth.failed')]);
-         }
+        return redirect($this->loginPath)
+            ->withInput($request->only('email', 'remember'))
+            ->withErrors(['email' => 'Incorrect email address or password']);
     }
-
-
 }

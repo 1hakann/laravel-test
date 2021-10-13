@@ -42,6 +42,11 @@
             <div class="card-body px-lg-5 py-lg-5">
               <div class="text-center text-muted mb-4">
                 <small>Or sign in with credentials</small>
+                @if (session('messages'))
+                <div class="alert alert-success" id="message">
+                {{ session('messages') }}
+                </div>
+                @endif
               </div>
               <form role="form" action="{{ route('admin.auth.login.post') }}" method="POST">
                 @csrf
@@ -52,6 +57,11 @@
                     </div>
                     <input class="form-control" placeholder="Email" type="email" name="email">
                   </div>
+                  @error('email')
+                  <div>
+                      <strong><small style="color:#db4bff">{{ $message }}</small></strong>
+                  </div>
+                  @enderror
                 </div>
                 <div class="form-group">
                   <div class="input-group input-group-merge input-group-alternative">
@@ -60,6 +70,11 @@
                     </div>
                     <input class="form-control" placeholder="Password" type="password" name="password">
                   </div>
+                  @error('password')
+                  <div>
+                      <strong><small style="color:#db4bff">{{ $message }}</small></strong>
+                  </div>
+                  @enderror
                 </div>
                 <div class="custom-control custom-control-alternative custom-checkbox">
                   <input class="custom-control-input" id=" customCheckLogin" type="checkbox" name="remember_token">
@@ -86,4 +101,13 @@
       </div>
     </div>
   </div>
+@endsection
+
+@section('delay-js')
+
+    <script type="text/javascript">
+      $(document).ready( function() {
+        $('#message').delay(2000).fadeOut();
+      });
+    </script>
 @endsection

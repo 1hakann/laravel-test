@@ -32,6 +32,7 @@ class CreateAdminsTable extends Migration
             $table->string('timezone', 64)->nullable();
             $table->rememberToken();
             $table->string('email_token')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

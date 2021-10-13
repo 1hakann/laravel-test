@@ -51,28 +51,26 @@
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                     </div>
-                    <input class="form-control "@error('username') is-invalid @enderror placeholder="User Name" type="text" name="username">
-
-                    @error('username')
-                    <div>
-                        <strong><small style="color:#db4bff">{{ $message }}</small></strong>
-                    </div>
-                    @enderror
+                    <input class="form-control "@error('username') is-invalid @enderror placeholder="User Name" type="text" name="username" value="{{ old('username') }}">
                   </div>
+                  @error('username')
+                  <div style="line-height: 0;">
+                      <strong><small style="color:#db4bff">{{ $message }}</small></strong>
+                  </div>
+                  @enderror
                 </div>
                 <div class="form-group">
                   <div class="input-group input-group-merge input-group-alternative mb-3">
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="ni ni-email-83"></i></span>
                     </div>
-                    <input class="form-control" placeholder="Email" type="email" name="email">
-
-                    @error('email')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
+                    <input class="form-control" placeholder="Email" type="email" name="email" value="{{ old('email') }}">
                   </div>
+                  @error('email')
+                  <div style="line-height: 0;">
+                      <strong><small style="color:#db4bff">{{ $message }}</small></strong>
+                  </div>
+                  @enderror
                 </div>
                 <div class="form-group">
                   <div class="input-group input-group-merge input-group-alternative">
@@ -80,13 +78,12 @@
                       <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                     </div>
                     <input class="form-control" placeholder="Password" type="password" name="password">
-
-                    @error('username')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
                 </div>
+                @error('password')
+                  <div>
+                      <strong><small style="color:#db4bff">{{ $message }}</small></strong>
+                  </div>
+                  @enderror
                 </div>
                 <div class="text-muted font-italic"><small>password strength: <span class="text-success font-weight-700">strong</span></small></div>
                 <div class="row my-4">
@@ -94,13 +91,18 @@
                     <div class="custom-control custom-control-alternative custom-checkbox">
                       <input class="custom-control-input" id="customCheckRegister" type="checkbox" name="remember_token">
                       <label class="custom-control-label" for="customCheckRegister">
-                        <span class="text-muted">I agree with the <a href="#!">Privacy Policy</a></span>
+                        <section class="text-muted">I agree with the <a href="#!">Privacy Policy</a></section>
                       </label>
                     </div>
+                    @error('remember_token')
+                    <div>
+                        <strong><small style="color:#db4bff">{{ $message }}</small></strong>
+                    </div>
+                    @enderror
                   </div>
                 </div>
                 <div class="text-center">
-                  <button type="submit" class="btn btn-primary mt-4" onclick="(e) => e.preventDefault()">Create account</button>
+                  <button type="submit" class="btn btn-primary mt-4">Create account</button>
                 </div>
               </form>
             </div>

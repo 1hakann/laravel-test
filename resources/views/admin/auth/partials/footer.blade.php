@@ -29,7 +29,9 @@
   <!-- Argon Scripts -->
   <!-- Core -->
   <!-- Argon JS -->
+
 <script src="{{ asset('admin/js/jquery.min.js') }}"></script>
+@yield('delay-js')
 <script src="{{ asset('admin/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('admin/js/cookie.js') }}"></script>
 <script src="{{ asset('admin/js/jquery.scrollbar.min.js') }}"></script>
