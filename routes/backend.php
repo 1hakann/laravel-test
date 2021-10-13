@@ -3,6 +3,7 @@
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
+
 Route::group(
     ['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.' ], function(Router $router) {
 
